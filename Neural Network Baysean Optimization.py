@@ -141,7 +141,20 @@ for feat, targ in dataset.take(5):
 
 
 # In[26]:
-
+def compile_model(hp):
+    layers = []
+    l_amount = hp.Int('l_amount', min_value=3, max_value=9, step=1)
+    l_size = hp.Int('l_size', min_value=200, max_value=1000, step=100)
+    for x in range(l_amount):
+        layers.append(tf.keras.layers.Dense(l_size, activation='relu'))
+    layers.append(tf.keras.layers.Dense(units=3, activation='softmax'))
+    model = tf.keras.Sequential(layers)
+    loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
+    opt = tf.keras.optimizers.Adam(clipnorm=1.0)
+    model.compile(optimizer=opt,
+                  loss=loss_fn,
+                  metrics=['accuracy'])
+    return model
 
 def compile_model(hp):
     layers = []
